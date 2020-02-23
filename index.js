@@ -16,25 +16,21 @@ const stopButton = document.querySelector(".stop");
 const speed = document.querySelector(".speed");
 const apikey = document.querySelector(".apikey");
 const totalDomain = document.querySelector(".total-domain-number");
-const articleError = document.querySelector(".article-error");
 const success = document.querySelector(".success");
 let numOfErrors = 0;
 let arrayLength = 0;
-let numOfArticleErrors = 0;
 speed.defaultValue = 1000;
-apikey.defaultValue = "68cb653c69f14558bd17f0cf0836e21b";
+apikey.defaultValue = "c2bfbc207f770c915ce2d5f642fb5f87";
 
 domains.placeholder = domains.placeholder.replace(/\\n/g, "\n");
 
 scrapeButton.addEventListener("click", function (e) {
 	arrayLength = 0;
 	numOfErrors = 0;
-	numOfArticleErrors = 0;
 	progressBar.textContent = "0%";
 	progressBar.style.width = "0%";
 	number.textContent = `Total Number of Domains Completed: 0`;
 	error.textContent = `Server Errors: 0`;
-	articleError.textContent = `Article Errors: 0`;
 	success.textContent = "Successful: 0";
 	markedText.classList.remove("marked-text--idle");
 	markedText.classList.remove("marked-text--green");
@@ -60,8 +56,8 @@ saveButton.addEventListener("click", function (e) {
 			defaultPath: `*/${moment().format("YYYY-MM-DD-hh-mm")}`,
 			filters: [
 				{
-					name: "XML File(.xml)",
-					extensions: [ "xml" ]
+					name: "CSV File(.csv)",
+					extensions: [ "csv" ]
 				}
 			]
 		},
@@ -96,7 +92,7 @@ ipcRenderer.on("result:number", function (e, numberText) {
 	progressBar.textContent = `${ratio}%`;
 	progressBar.style.width = `${ratio}%`;
 	number.textContent = `Total Number of Domains Completed: ${numberText}`;
-	success.textContent = `Successful: ${numberText - numOfErrors - numOfArticleErrors}`;
+	success.textContent = `Successful: ${numberText - numOfErrors}`;
 	if (ratio === 100) {
 		progressBar.textContent = "Completed";
 		progressBar.classList.remove("progress-bar-animated");
@@ -131,11 +127,6 @@ ipcRenderer.on("list:error", function (e) {
 ipcRenderer.on("result:error", function (e) {
 	numOfErrors++;
 	error.textContent = `Server Errors: ${numOfErrors}`;
-});
-
-ipcRenderer.on("result:error-no-article", function (e) {
-	numOfArticleErrors++;
-	articleError.textContent = `Article Errors: ${numOfArticleErrors}`;
 });
 
 ipcRenderer.on("scrape:stopped", function (e) {

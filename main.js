@@ -1,14 +1,11 @@
 "use strict";
 
 const electron = require("electron");
+const { app, BrowserWindow, Menu, ipcMain } = electron;
 const url = require("url");
 const path = require("path");
 const axios = require("axios");
 const fs = require("fs");
-const builder = require("xmlbuilder");
-const sanitizeHtml = require("sanitize-html");
-
-const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 require("electron-reload")(__dirname, {
 	electron: path.join(__dirname, "node_modules", ".bin", "electron.cmd")
@@ -31,7 +28,8 @@ app.on("ready", function () {
 		width: 1100,
 		height: 850,
 		webPreferences: {
-			nodeIntegration: true
+			nodeIntegration: true,
+			nodeIntegrationInWorker: true
 		}
 	});
 	//Load html into window
@@ -116,26 +114,25 @@ ipcMain.on("domain:save", function (e, fileName) {
 		return;
 	}
 
-	let xml = builder.create("Posts");
+	let data = [];
 
-	resultsArr.forEach((cur, index) => {
-		xml
-			.ele("Post", { id: index + 1 })
-			.ele("Title", cur.title)
-			.up()
-			.ele("Html", cur.html)
-			.up()
-			.ele("OriginalHtml", cur.originalHtml)
-			.up()
-			.ele("Text", cur.text)
-			.up()
-			.ele("Url", cur.url)
-			.up()
-			.ele("Description", cur.description)
-			.end({ pretty: true });
+	data.push("url,category 1 code,category 1 label,category 1 abs relevance, category 1 relevance");
+
+	resultsArr.forEach((cur) => {
+		let newStr = `${cur.url}`;
+		const list = cur.category_list;
+		if (typeof list !== "undefined") {
+			newStr = `${newStr},${list[0].code},${list[0].label},${list[0].relevance},${list[0].abs_relevance}`;
+		} else {
+			newStr = `${newStr},"","","",""`;
+		}
+
+		data.push(newStr);
 	});
 
-	fs.writeFile(fileName, xml, function (err) {
+	data = data.join("\n");
+
+	fs.writeFile(fileName, data, function (err) {
 		if (err) {
 			mainWindow.webContents.send("file:notSaved");
 			return;
@@ -171,112 +168,30 @@ function scrape () {
 }
 
 function test (i) {
-	axios({
-		method: "post",
-		url: "https://autoextract.scrapinghub.com/v1/extract",
-		data: [
-			{
-				url: domainList[i],
-				pageType: "article"
-			}
-		],
-		headers: { "Content-Type": "application/json" },
-		auth: {
-			username: apikey,
-			password: ""
-		}
-	})
+	axios
+		.post(`https://api.meaningcloud.com/deepcategorization-1.0?key=${apikey}&url=${domainList[i]}&model=IAB_2.0_en`)
 		.then((res) => {
-			let data = res.data[0].article;
-			if (typeof data.articleBodyHtml === "undefined") {
-				throw new Error("no-article-found");
-			}
-
-			return data;
-		})
-		.then((data) => {
-			const options = {
-				allowedTags: [
-					"h3",
-					"h4",
-					"h5",
-					"h6",
-					"blockquote",
-					"p",
-					"ul",
-					"ol",
-					"nl",
-					"li",
-					"b",
-					"i",
-					"strong",
-					"em",
-					"strike",
-					"code",
-					"hr",
-					"br",
-					"div",
-					"table",
-					"thead",
-					"caption",
-					"tbody",
-					"tr",
-					"th",
-					"td",
-					"pre",
-					"iframe",
-					"img",
-					"figure",
-					"article",
-					"h2",
-					"h1"
-				],
-				allowedAttributes: {
-					img: [ "src", "alt", "sizes" ]
-				}
+			const newObj = {
+				url: domainList[i],
+				category_list: res.data.category_list
 			};
-
-			data.articleBodyHtml = sanitizeHtml(data.articleBodyHtml, options);
-			data.articleBodyRaw = sanitizeHtml(data.articleBodyRaw, options);
-
-			return data;
-		})
-		.then((data) => {
-			if (typeof data.headline !== "undefined") {
-				const nTitle = data.headline.split(" ");
-				const arrangedTitle = [];
-				nTitle.forEach((cur) => {
-					const aTitle = `${cur[0].toUpperCase()}${cur.slice(1)}`;
-					arrangedTitle.push(aTitle);
-				});
-				data.headline = arrangedTitle.join(" ");
-			}
-
-			const result = {
-				title: data.headline || "",
-				html: data.articleBodyHtml,
-				originalHtml: data.articleBodyRaw,
-				text: data.articleBody,
-				url: data.url,
-				description: data.description,
-				images: data.images
-			};
-			resultsArr.push(result);
+			resultsArr.push(newObj);
 		})
 		.then(() => {
 			idx++;
 			const numberText = idx;
 			mainWindow.webContents.send("result:number", numberText);
+			//! remove later
+			if (idx === domainList.length) {
+				mainWindow.webContents.send("result:itself", resultsArr);
+			}
 		})
 		.catch((e) => {
+			console.log(e);
 			idx++;
 			const numberText = idx;
 			mainWindow.webContents.send("result:number", numberText);
-			if (e.message === "no-article-found") {
-				mainWindow.webContents.send("result:error-no-article");
-			} else {
-				mainWindow.webContents.send("result:error");
-			}
+			mainWindow.webContents.send("result:error");
 		});
 }
 
