@@ -1,0 +1,136 @@
+body {
+	background-color: #2b5876;
+}
+.main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: start;
+}
+.boxes {
+	margin: 0rem;
+}
+.domains__div {
+	width: 95%;
+	display: flex;
+	flex-direction: column;
+	margin-top: 1rem;
+}
+
+.stats {
+	display: flex;
+	padding: 1rem 0;
+}
+
+.stats-box:nth-of-type(2) {
+	padding-left: 3rem;
+}
+
+.boxes__button {
+	align-self: center;
+	margin: 0.5rem 0;
+	margin-right: 1rem;
+	padding: .7rem 2rem;
+	border: none;
+	outline: none;
+	transition: all 0.1s;
+	cursor: pointer;
+	border-radius: 5px;
+	font: inherit;
+}
+.boxes__button:hover {
+	transform: scale(1.05);
+	color: white;
+}
+.boxes__button[disabled]:hover {
+	transform: none;
+}
+.boxes__button:active {
+	transform: scale(0.95);
+}
+
+.results__div {
+	width: 95%;
+}
+
+#domains,
+#proxies {
+	resize: none;
+	font-family: inherit;
+	background-color: #0a3d62;
+	color: white;
+	border: none;
+}
+
+label {
+	color: white;
+}
+
+.form-group input.form-control,
+.form-group input.form-control:active {
+	background-color: #0a3d62;
+	color: white;
+	border: none;
+}
+
+.info {
+	line-height: 1;
+}
+
+.progress {
+	margin-top: 1rem;
+}
+
+.navbar {
+	background-color: #0a3d62;
+	display: flex;
+	align-items: center;
+}
+.btn {
+	background-color: #0a3d62;
+	color: white;
+}
+.progress-bar {
+	background-color: #0a3d62;
+	color: white;
+}
+.logo {
+	line-height: 0;
+	margin-top: .2rem;
+	font-size: 0;
+	height: 70px;
+	width: 70px;
+	margin-left: .5rem;
+	background-size: contain;
+	background-image: url("../scraper.svg");
+	background-repeat: no-repeat;
+	transform: rotate(45deg);
+}
+.navbar-brand {
+	cursor: default;
+}
+#inputState {
+	background-color: #40485a;
+	color: white;
+}
+.completion {
+	color: white;
+}
+.marked-text--idle {
+	background-color: #0a3d62;
+}
+
+.marked-text--red {
+	background-color: #b71540;
+}
+
+.marked-text--green {
+	background-color: #079992;
+}
+.marked-text--yellow {
+	background-color: #fa983a;
+}
+
+.stop--disabled {
+	cursor: not-allowed !important;
+}

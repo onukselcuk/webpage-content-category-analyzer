@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Article Scraper</title>
+    <link rel="stylesheet" href="styles/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand logo">
+        </a>
+        <a class="navbar-brand" style="color:white">Article Scraper</a>
+    </nav>
+    <div class="main">
+        <div class="boxes  domains__div">
+            <div class="form-group">
+                <label style="color:white" for="domains">Domain List</label>
+                <textarea name="domains" id="domains" class="form-control" cols="80" rows="10"
+                    placeholder="amazon.com\ngoogle.com\nyoutube.com\ntwitter.com"></textarea>
+            </div>
+        </div>
+        <div class="boxes results__div">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputSpeed">Speed (ms) </label>
+                    <input type="text" class="form-control speed" id="inputSpeed" placeholder="1000">
+                </div>
+                <div class="form-group col-md-6 apikey-div">
+                    <label for="inputAddress2">API Key</label>
+                    <input type="text" class="form-control apikey" id="inputAddress2"
+                        placeholder="68cb653c69f14558bd17f0cf0836e21b">
+                </div>
+            </div>
+            <p style="color:white;line-height: 0.8">Progress:</p>
+            <div class="progress" style="height: 30px;">
+                <div class="progress-bar progress-bar-striped" id="progress-bar" role="progressbar" style="width: 0%"
+                    aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+            <div class="stats">
+                <div class="stats-box">
+                    <p style="color:white" class="info  total-domain-number">Total Number of Domains : 0</p>
+                    <p style="color:white" class="info number">Total Number of Domains Completed: 0</p>
+                    <p style="color:white" class="info">Scraping Completed: <mark
+                            class="marked-text marked-text--idle"><span class="completion">Not
+                                Running</span></mark></p>
+                </div>
+                <div class="stats-box">
+                    <p style="color:white" class="info success">Successful: 0</p>
+                    <p style="color:white" class="info article-error">Article Errors: 0</p>
+                    <p style="color:white" class="info error">Server Errors: 0</p>
+                </div>
+            </div>
+            <button class="boxes__button btn start-button">Start Scraping</button>
+            <button class="boxes__button save  btn">Save to File</button>
+            <button class="boxes__button reset btn">Reset</button>
+            <button class="boxes__button stop stop--disabled btn" disabled>Stop Scraping</button>
+        </div>
+    </div>
+    <script src="styles/bootstrap/popper/popper.min.js"></script>
+    <script src="styles/bootstrap/jquery/jquery-3.4.1.min.js"></script>
+    <script src="styles/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        require("./index.js");
+    </script>
+</body>
+
+</html>
