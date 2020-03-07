@@ -121,7 +121,7 @@ ipcMain.on("domain:save", function (e, fileName) {
 	resultsArr.forEach((cur) => {
 		let newStr = `${cur.url}`;
 		const list = cur.category_list;
-		if (typeof list !== "undefined") {
+		if (typeof list !== "undefined" && typeof list[0] !== "undefined") {
 			newStr = `${newStr},${list[0].code},${list[0].label},${list[0].relevance},${list[0].abs_relevance}`;
 		} else {
 			newStr = `${newStr},"","","",""`;
